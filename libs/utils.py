@@ -1,9 +1,10 @@
+from functools import wraps
 
 def print_help(options):
     print("::: These are your options :::\n")
     print("help -> prints this helpful dialog")
-    for key in options.keys():
-        print(key + " -> " + options[key][2])
+    for option in options.keys():
+        print(option + "\n        ->  " + options[option].__doc__)
 
     print("\n #### Good luck out there! ####")
     return
@@ -11,9 +12,10 @@ def print_help(options):
 
 def prompts_user(function):
     "a decorator for giving user a prompt"
+    @wraps(function)
     def wrapper(*args):
         try:
-            options = function(args)
+            options = {option.__name__: option for option in function(args)}
             while True:
                 print(" ")
                 _rawResp = input("%s > " % function.__name__)
@@ -24,12 +26,10 @@ def prompts_user(function):
                 elif _resp[0] in options.keys():
                     # First check if user wanted help
                     if "--help" in _resp or "-h" in _resp:
-                        print(options[_resp[0]][2])
+                        print(options[_resp[0]].__doc__)
                     # Otherwise we print and call the function
                     else:
-                        print("user called functionality! ")
-                        print(options[_resp[0]][0]) # First print the msg
-                        options[_resp[0]][1](_resp) # Call the function
+                        options[_resp[0]](_resp)  # Call the function
                 else:
                     print("""
                             Im sorry dave, I cant do that.
