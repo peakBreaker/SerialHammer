@@ -2,6 +2,7 @@
 
 import serial
 from libs.utils import prompts_user
+from loganalysismode import analyzelogs
 
 welcome = """
   ____            _       _ _   _
@@ -15,15 +16,14 @@ welcome = """
  |___________________________________________________________________|
 """
 
-# options = """
-# ::: These are your options :::
-#     help -> Prints out this help dialog
-#     Go North -> Goes north
-# """
-
-
-def do_something(*args):
+def do_something(args, twoandahalfargs, otherArgs: 'beginDefault' = False , thirdargs = "heyhey"):
     "Does useful stuff"
+    print("Got args")
+    print(args)
+    print(twoandahalfargs)
+    print(otherArgs)
+    print(thirdargs)
+
     print("I am doing something!")
     return
 
@@ -35,7 +35,7 @@ do_something_welcome = "does something.."
 
 
 @prompts_user
-def new_state(*args):
+def new_state(arg, arg2):
     "Puts prompt into new state"
     print("I am now in a new state, ready to do some crazey stuff")
     new_state_dict = [do_something, main]
@@ -45,7 +45,7 @@ def new_state(*args):
 @prompts_user
 def main(*args):
     """main function docstring!"""
-    options = [new_state, do_something]
+    options = [new_state, do_something, analyzelogs]
     return options
 
 

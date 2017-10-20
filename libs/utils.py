@@ -1,4 +1,5 @@
 from functools import wraps
+import inspect
 
 hal9000 = """
 @@@@@@@@@@@@@@@@@@@@@,#####++###################;@@@@@@@@@@@@@@@@@@@@@@
@@ -24,6 +25,22 @@ hal9000 = """
                             -> Try writing help
 """
 
+def inspect_function(func):
+    "Gets the arguments from the function"
+    # First get argument specifiers
+    print("finding args for function %s" % func.__name__)
+    signatures = inspect.signature(func)
+    print(signatures)
+    sigpar = [signatures.parameters[param]
+              for param in signatures.parameters]
+    for sig in sigpar:
+        print(sig.default)
+    args = [param.default if param.default is not inspect._empty
+            else "N/A" if str(param) is not 'self' else param.name 
+            for param in [signatures.parameters[param]
+                          for param in signatures.parameters]]
+    print(args)
+    return args
 
 def print_help(options):
     print("::: These are your options :::\n")
@@ -40,7 +57,8 @@ def prompts_user(function):
     @wraps(function)
     def wrapper(*args):
         try:
-            options = {option.__name__: option for option in function(args)}
+            args = inspect_function(function)
+            options = {option.__name__: option for option in function(*args)}
             while True:
                 print(" ")
                 _rawResp = input("%s > " % function.__name__)
@@ -49,12 +67,17 @@ def prompts_user(function):
                 if _resp[0] == "help":
                     print_help(options)
                 elif _resp[0] in options.keys():
+                    called_function = options[_resp[0]]
                     # First check if user wanted help
                     if "--help" in _resp or "-h" in _resp:
-                        print(options[_resp[0]].__doc__)
+                        print(function.__doc__)
                     # Otherwise we print and call the function
                     else:
-                        options[_resp[0]](_resp)  # Call the function
+                        args = inspect_function(called_function)
+                        if args or args == []:
+                            called_function(*args)  # Call the function
+                        else:
+                            print("#### UNSUPPORTED FUNCTION ####")
                 else:
                     print(hal9000)
 
