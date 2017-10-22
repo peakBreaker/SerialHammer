@@ -35,8 +35,8 @@ def LogLineGenerator():
     # Finally we make the generator
     while True:
         with open("./logs/" + userLog, 'r') as l:
-            line = l.readline()
-            print("Opening the log :: %s -- %s" % (userLog, line))
+            # line = l.readline()
+            print("Opening the log :: %s" % userLog)
             for line in l:
                 yield line
             else:

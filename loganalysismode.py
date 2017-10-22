@@ -13,10 +13,10 @@ class loganalyser(object):
 
     def __init__(self):
         "initiates the loganalyser by getting the logs"
-        print("initing the generator")
+        # print("initing the generator")
         self.lineGen = LogLineGenerator()
         # line = next(self.lineGen)
-        print(next(self.lineGen))
+        print("Analyzing log - First line of log ::: " + next(self.lineGen))
         if self.lineGen:
             print("Hurray, you now have a valid loganalyser obj with logGen!")
             return
@@ -43,9 +43,10 @@ class loganalyser(object):
 
     @prompts_user
     def selectAnalysis(self):
-        self = self[0]
+        # self = self[0]
+        # print("self is:: ")
         while True:
-            print(self)
+            # print(self)
             if self.lineGen:
                 choicesList = [self.parser, self.linReg, self.anomalies]
                 return choicesList

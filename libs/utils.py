@@ -28,18 +28,18 @@ hal9000 = """
 def inspect_function(func):
     "Gets the arguments from the function"
     # First get argument specifiers
-    print("finding args for function %s" % func.__name__)
+    # print("finding args for function %s" % func.__name__)
     signatures = inspect.signature(func)
-    print(signatures)
-    sigpar = [signatures.parameters[param]
-              for param in signatures.parameters]
-    for sig in sigpar:
-        print(sig.default)
-    args = [param.default if param.default is not inspect._empty
-            else "N/A" if str(param) is not 'self' else param.name 
-            for param in [signatures.parameters[param]
-                          for param in signatures.parameters]]
-    print(args)
+    # print(signatures)
+    # Getting the signature parameter objects
+    _p = {signatures.parameters[p].name: signatures.parameters[p].default
+          if signatures.parameters[p].default is not inspect._empty else "N/A"
+          for p in signatures.parameters}
+    args = []
+    for param, val in _p.items():
+        userVal = input("Provide optional arg for %s [%s] > " % (param, val))
+        args.append(userVal if userVal is not "" else val)
+    # print(args)
     return args
 
 def print_help(options):
@@ -57,9 +57,10 @@ def prompts_user(function):
     @wraps(function)
     def wrapper(*args):
         try:
-            args = inspect_function(function)
+            # Firsy get the possible options
             options = {option.__name__: option for option in function(*args)}
             while True:
+                # Prompt the user response
                 print(" ")
                 _rawResp = input("%s > " % function.__name__)
                 _resp = _rawResp.split(" ")
@@ -74,7 +75,14 @@ def prompts_user(function):
                     # Otherwise we print and call the function
                     else:
                         args = inspect_function(called_function)
+                        # print("Got args!")
+                        # if 'self' in args:
+                        #     print("Removing self before calling function")
+                        #     args.remove('self')
+                        # Give user possibility to supply argument
                         if args or args == []:
+                            # print("Calling function with args : ")
+                            # print(*args)
                             called_function(*args)  # Call the function
                         else:
                             print("#### UNSUPPORTED FUNCTION ####")
